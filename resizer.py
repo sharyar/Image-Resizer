@@ -19,8 +19,33 @@ dest_folder = ''
 
 
 # Main function that resizes Images
-def resizer_fun(sizes, images):
-    pass
+def resizer_fun(sizes, source_folder, dest_folder):
+    os.chdir(source_folder)
+    for infile in glob.glob('*.jpg'):
+        file, ext = os.path.splitext(infile)
+        im = Image.open(infile)
+
+        width, height = im.size
+
+        for value in sizes:
+            if width > height:
+                width_n = value
+                height_n = int(value/width * height)
+
+            else:
+                height_n = value
+                width_n = int(value/height * width)
+
+            size_n = (width_n, height_n)
+
+            im_s = im.resize(size_n, Image.ANTIALIAS)
+
+            os.chdir(dest_folder)
+            im_s.save(file+'resized'+str(size_n[0]) + ext, 'jpeg')
+
+        os.chdir(source_folder)
+        
+
 
 
 # Folder Selection Functions for source and destination
@@ -63,6 +88,9 @@ size_entry.pack()
 
 but_get_sizes = ttk.Button(root, text = 'Store Sizes', command = lambda: get_sizes(size_var))
 but_get_sizes.pack()
+
+but_process = ttk.Button(root, text = 'Process', command = lambda: resizer_fun(sizes, source_folder, dest_folder))
+but_process.pack()
 # panedwindow = ttk.Panedwindow(root, orient = HORIZONTAL)
 # panedwindow.pack(fill = BOTH, expand = True)
 # frame1 = ttk.Frame(panedwindow, width = 100, height=300, relief = SUNKEN)
